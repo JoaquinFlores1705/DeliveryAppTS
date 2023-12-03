@@ -3,6 +3,7 @@ import { handleHttp } from "../utils/error.handle";
 import UserRepository from "../repositories/user.repository";
 
 class UserController{
+    
     constructor() {
     }
 
