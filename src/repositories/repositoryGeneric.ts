@@ -47,7 +47,7 @@ class RepositoryGeneric<T extends RowDataPacket> implements IGenericRepository<T
             query += ` WHERE = ${where}`;
 
         if (order.trim() !== "")
-            query += ` ORDER BY = ${order}`;
+            query += ` ORDER BY ${order}`;
         
         return new Promise((resolve, reject) => {
             connection.query<T[]>(query, (err, res) => {
