@@ -1,4 +1,4 @@
-import { IGenericRepository } from "./crud.interface"
+import { IGenericRepository } from "./generic.interface.repository"
 import connection from "../config/mysql"
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import AuditFields from "../models/AuditFields";
@@ -44,14 +44,13 @@ class RepositoryGeneric<T extends RowDataPacket> implements IGenericRepository<T
         let query: string = `SELECT * FROM ${this.tableName}`;
 
         if (where.trim() !== "")
-            query += ` WHERE = ${where}`;
+            query += ` WHERE ${where}`;
 
         if (order.trim() !== "")
             query += ` ORDER BY ${order}`;
         
         return new Promise((resolve, reject) => {
             connection.query<T[]>(query, (err, res) => {
-            console.log(res);
             if (err) reject(err);
             else resolve(res as T[]);
             });

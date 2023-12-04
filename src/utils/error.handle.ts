@@ -1,8 +1,12 @@
 import { Response } from "express";
+import { ErrorResponseREST, codeResponseREST } from "../types/response.types";
 
-const handleHttp = (res: Response, error: string, errorRaw?: any) => {
-    res.status(500);
-    res.send({error});
+const handleHttp = (res: Response, errorCode: string, errorMessage: string, errorRaw?: any) => {
+    res.status(codeResponseREST.error);
+    res.send({
+        code: errorCode,
+        message: errorMessage
+    });
     console.log(errorRaw);
 };
 
