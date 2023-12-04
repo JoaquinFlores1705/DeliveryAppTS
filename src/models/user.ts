@@ -1,6 +1,7 @@
 import { RowDataPacket } from "mysql2"
+import AuditFields from "./AuditFields";
 
-export default interface User extends RowDataPacket {
+export default interface User extends RowDataPacket, AuditFields {
   id: number;
   email:string;
   name:string;
@@ -8,6 +9,4 @@ export default interface User extends RowDataPacket {
   phone:string;
   image:string;
   password:string;
-  created_at:Date;
-  updated_at:Date
 }

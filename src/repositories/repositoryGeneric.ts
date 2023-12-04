@@ -1,15 +1,26 @@
 import { IGenericRepository } from "./crud.interface"
 import connection from "../config/mysql"
 import { ResultSetHeader, RowDataPacket } from "mysql2";
+import AuditFields from "../models/AuditFields";
 
 class RepositoryGeneric<T extends RowDataPacket> implements IGenericRepository<T> { 
 
-    constructor(private tableName:string, private keyPrimary = "id" ) {
+    constructor(private tableName:string, private keyPrimary = "id") {
         
     };
 
+    private isAnAuditFields(obj: any): obj is AuditFields {
+        return 'created_at' in obj || 'updated_at' in obj;
+      }
+
     save(entity: T) : Promise<T>{
+
         const keys: string[] = Object.keys(entity).filter(k => k !== this.keyPrimary);
+
+        if(this.isAnAuditFields(entity)){
+            entity.created_at = new Date();
+            entity.updated_at = new Date();
+        }
 
         return new Promise((resolve, reject) => {
             connection.query<ResultSetHeader>(
@@ -19,7 +30,6 @@ class RepositoryGeneric<T extends RowDataPacket> implements IGenericRepository<T
                     return value
               }),
               (err, res) => {
-                console.log(res);
                 if (err) reject(err);
                 else
                   this.getById(res.insertId)
@@ -54,7 +64,6 @@ class RepositoryGeneric<T extends RowDataPacket> implements IGenericRepository<T
               `SELECT * FROM ${this.tableName} WHERE id = ?`,
               [id],
               (err, res) => {
-                console.log(res);
                 if (err) reject(err);
                 else resolve(res?.[0]);
               }
@@ -64,6 +73,11 @@ class RepositoryGeneric<T extends RowDataPacket> implements IGenericRepository<T
 
     update(entity: T): Promise<number>{
         const keys: string[] = Object.keys(entity).filter(k => k !== this.keyPrimary).map(k => `${k} = ?`);
+
+        if(this.isAnAuditFields(entity)){
+            entity.updated_at = new Date();
+        }
+
         return new Promise((resolve, reject) => {
             connection.query<ResultSetHeader>(
                 `UPDATE ${this.tableName} SET ${keys.join(',')} WHERE id = ?`,
