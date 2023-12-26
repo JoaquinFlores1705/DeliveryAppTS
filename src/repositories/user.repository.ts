@@ -1,17 +1,10 @@
 import ResponseGeneric from "../models/response.generic";
 import User from "../models/user";
 import { ResponseREST, codeResponseREST } from "../types/response.types";
-import RepositoryGeneric from "./generic.repository";
 import { IUserRepository } from "./user.interface.repository";
+import { prisma } from "../config/db";
 
-class UserRepository extends RepositoryGeneric<User> implements IUserRepository<User> { 
-
-    /**
-     *
-     */
-    constructor() {
-        super("users");
-    }
+class UserRepository implements IUserRepository<User> { 
 
     async createUser(entity: User): Promise<ResponseGeneric>{
 
@@ -19,14 +12,21 @@ class UserRepository extends RepositoryGeneric<User> implements IUserRepository<
         let data: User | string;
         let message: ResponseREST = ResponseREST.POST_SUCCESS;
         const {email} = entity;
-        let getRepeatEmail:User[] = await this.getAll(`email = '${email}'`);
 
-        if(getRepeatEmail.length > 0){
+        const getRepeatEmail:User | null = await prisma.user.findUnique({
+            where: {
+                email,
+            }
+        });
+
+        if(getRepeatEmail){
             code = codeResponseREST.duplicate;
             message = ResponseREST.DUPLICATE;
             data = `Email: ${email} ya existe en la base de datos`;
         }else{
-            data = await this.save(entity);
+            data = await prisma.user.create({
+                data: entity
+            });
         }
 
         return new Promise((resolve, reject) => {
@@ -40,26 +40,41 @@ class UserRepository extends RepositoryGeneric<User> implements IUserRepository<
         });
     }
 
-    async updateUser(entity: User): Promise<ResponseGeneric>{
+    async updateUser(id: bigint, entity: User): Promise<ResponseGeneric>{
 
         let code: codeResponseREST = codeResponseREST.success;
         let data: User | string | undefined;
         let message: ResponseREST = ResponseREST.PUT_SUCCESS;
-        const {id, email} = entity;
-        const userModified: User | undefined = await this.getById(id);
-        let getRepeatEmail:User[] = await this.getAll(`email = '${email}' AND id != ${id}`);
+        const {email} = entity;
+        const userModified: User | null = await prisma.user.findUnique({
+            where: {
+                id,
+            }
+        });
+        let getRepeatEmail:User | null = await prisma.user.findUnique({
+            where: {
+                email,
+                NOT:{
+                    id
+                }
+            }
+        });
 
         if(!userModified){
             code = codeResponseREST.notFound;
             message = ResponseREST.NOT_FOUND;
             data = `No existe un usuario con ID: ${id}`;
-        }else if(getRepeatEmail.length > 0){
+        }else if(getRepeatEmail){
             code = codeResponseREST.duplicate;
             message = ResponseREST.DUPLICATE;
             data = `Email: ${email} ya existe en la base de datos`;
         }else{
-            const response = await this.update(entity);
-            data = await this.getById(id);
+            data = await prisma.user.update({
+                where: {
+                    id
+                },
+                data: entity
+            });
         }
 
         return new Promise((resolve, reject) => {
@@ -73,14 +88,18 @@ class UserRepository extends RepositoryGeneric<User> implements IUserRepository<
         });
     }
 
-    async getUser(id: number | string): Promise<ResponseGeneric>{
+    async getUser(id: bigint): Promise<ResponseGeneric>{
         let code: codeResponseREST = codeResponseREST.success;
         let data: User | string;
         let message: ResponseREST = ResponseREST.GET_SUCCESS;
 
-        const response = await this.getById(id);
+        const response = await prisma.user.findUnique({
+            where: {
+                id,
+            }
+        });
 
-        if(response == undefined){
+        if(!response){
             code = codeResponseREST.notFound;
             message = ResponseREST.NOT_FOUND;
             data = `No se ha encontrado el item: ${id}`;
@@ -99,11 +118,11 @@ class UserRepository extends RepositoryGeneric<User> implements IUserRepository<
         });
     }
 
-    async getUsers(where: string = "", order:string = "") : Promise<ResponseGeneric>{
+    async getUsers() : Promise<ResponseGeneric>{
         let code: codeResponseREST = codeResponseREST.success;
         let message: ResponseREST = ResponseREST.GET_SUCCESS;
 
-        const data: User[] = await this.getAll(where,order);
+        const data: User[] = await prisma.user.findMany();
 
         return new Promise((resolve, reject) => {
             resolve ({
@@ -116,19 +135,23 @@ class UserRepository extends RepositoryGeneric<User> implements IUserRepository<
         });
     }
 
-    async deleteUser(id: number | string): Promise<ResponseGeneric>{
+    async deleteUser(id: bigint): Promise<ResponseGeneric>{
         let code: codeResponseREST = codeResponseREST.success;
         let message: ResponseREST = ResponseREST.DELETE_SUCCESS;
         let data: string;
 
-        const response: number = await this.delete(id);
+        const response: User | null = await prisma.user.delete({
+            where: {
+                id,
+            }
+        });
 
-        if(response == 0){
+        if(!response){
             code = codeResponseREST.notFound;
             message = ResponseREST.NOT_FOUND;
             data = `No se ha encontrado el item: ${id}`;
         }else{
-            data = `Eliminado el item: ${id}`;
+            data = `Eliminado el item: ${response.id}`;
         }
 
         return new Promise((resolve, reject) => {

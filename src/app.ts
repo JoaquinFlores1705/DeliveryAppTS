@@ -1,6 +1,7 @@
 import "dotenv/config"
 import express, { Application } from "express";
 import Server from "./server";
+import './config/patch';
 
 const app: Application = express();
 const server: Server = new Server(app);

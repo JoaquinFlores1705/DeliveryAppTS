@@ -12,6 +12,7 @@ class UserController{
     async createUser({body}: Request, res: Response){
         try{
             const response: ResponseGeneric =  await UserRepository.createUser(body);
+            console.log(response);
             res.status(response.code)
             res.send(response.body);
         }catch (e){
@@ -22,7 +23,7 @@ class UserController{
     async getUser({params}: Request, res: Response){
         try{
             const {id} = params;
-            const response: ResponseGeneric =  await UserRepository.getUser(id);
+            const response: ResponseGeneric =  await UserRepository.getUser(BigInt(id));
             res.status(response.code)
             res.send(response.body);
         }catch (e){
@@ -40,9 +41,10 @@ class UserController{
         }
     }
 
-    async updateUser({body}: Request, res: Response){
+    async updateUser({params, body}: Request, res: Response){
         try{
-            const response: ResponseGeneric =  await UserRepository.updateUser(body);
+            const {id} = params;
+            const response: ResponseGeneric =  await UserRepository.updateUser(BigInt(id), body);
             res.status(response.code)
             res.send(response.body);
         }catch (e){
@@ -53,7 +55,7 @@ class UserController{
     async deleteUser({params}: Request, res: Response){
         try{
             const {id} = params;
-            const response: ResponseGeneric =  await UserRepository.deleteUser(id);
+            const response: ResponseGeneric =  await UserRepository.deleteUser(BigInt(id));
             res.status(response.code)
             res.send(response.body);
         }catch (e){
