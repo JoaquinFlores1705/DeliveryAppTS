@@ -9,15 +9,18 @@ enum ResponseREST{
     POST_SUCCESS = "POST OK",
     GET_SUCCESS = "GET OK",
     PUT_SUCCESS = "UPDATE OK",
+    PUT_FAIL = "UPDATE FAIL",
     DELETE_SUCCESS = "DELETE OK",
     NOT_FOUND = "NOT FOUND",
-    DUPLICATE = "DUPLICATE"
+    DUPLICATE = "DUPLICATE",
+    NOT_AUTHORIZED = "UNAUTHORIZED",
   }
 
 enum codeResponseREST{
     success= 200,
     duplicate=403,
     notFound=404,
+    notAuthorized=401,
     error=500
 }
 

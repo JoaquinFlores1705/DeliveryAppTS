@@ -11,7 +11,8 @@ class UserRoutes {
     }
   
     intializeRoutes() {
-        this.router.get('/',  this.controller.getUsers);
+        this.router.get('/', this.controller.getUsers);
+        this.router.get('/login', this.controller.login);
         this.router.get('/:id', this.controller.getUser);
         this.router.post('/', this.controller.createUser);
         this.router.put('/:id', this.controller.updateUser);

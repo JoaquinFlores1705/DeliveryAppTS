@@ -3,6 +3,6 @@ import userRoutes from "./user.routes";
 
 export default class Routes {
   constructor(app: Application) {
-    app.use("/users", userRoutes);
+    app.use("/api/users", userRoutes);
   }
 }
