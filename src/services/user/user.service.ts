@@ -1,6 +1,6 @@
 import { UserEntity } from "../../entities/user.entity";
 import { IUserService } from "./user.interface.service";
-import UserDTO from "../../dto/user/user";
+import UserDTO from "../../dto/user/user.dto";
 import { BaseService } from "../base.service";
 import { DeleteResult, UpdateResult } from "typeorm";
 

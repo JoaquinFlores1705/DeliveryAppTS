@@ -1,9 +1,9 @@
 import { UserEntity } from "../../entities/user.entity";
 import ResponseGeneric from "../../models/response.generic";
-import User from "../../dto/user/user";
+import User from "../../dto/user/user.dto";
 import { ResponseREST, codeResponseREST } from "../../shared/types/response.types";
 import bcrypt from "bcryptjs";
-import UserDTO from "../../dto/user/user";
+import UserDTO from "../../dto/user/user.dto";
 import { IUserHandle } from "./user.handle.interface";
 import UserService from "../../services/user/user.service";
 import { DeleteResult, UpdateResult } from "typeorm";

@@ -1,4 +1,4 @@
-import UserDTO from "../../dto/user/user";
+import UserDTO from "../../dto/user/user.dto";
 import ResponseGeneric from "../../models/response.generic";
 
 export interface IUserHandle<T extends UserDTO> {

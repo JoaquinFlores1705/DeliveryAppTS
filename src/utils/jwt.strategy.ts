@@ -1,5 +1,5 @@
 import { codeResponseREST } from "../shared/types/response.types";
-import User from "../dto/user/user";
+import User from "../dto/user/user.dto";
 import ResponseGeneric from "../models/response.generic";
 import { PassportUse } from "./passport.use";
 import { ExtractJwt, Strategy as JwtStr, StrategyOptions } from "passport-jwt";

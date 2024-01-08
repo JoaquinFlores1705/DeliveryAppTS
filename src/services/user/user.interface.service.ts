@@ -1,4 +1,4 @@
-import UserDTO from "../../dto/user/user";
+import UserDTO from "../../dto/user/user.dto";
 import { UserEntity } from "../../entities/user.entity";
 import ResponseGeneric from "../../models/response.generic";
 import { IGenericService } from "../generic/generic.interface.service";
